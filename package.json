@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "pinia": "^2.0.23",
-    "postcss-scss": "^4.0.5",
+    "sass": "^1.55.0",
     "uid": "^2.0.1",
     "vue": "^3.2.41",
     "vue-router": "^4.1.5"
