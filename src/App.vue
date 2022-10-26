@@ -52,7 +52,15 @@ const invoiceModal = computed(() => {
     <div
       class="relative flex flex-col sm:flex-row min-h-screen py-0 px-5 flex-1"
     >
-      <InvoiceModal v-if="invoiceModal" />
+      <transition
+        name="invoice"
+        enter-active-class="transition-all ease-in duration-200"
+        enter-from-class="translate-x-[-700px]"
+        leave-active-class="transtion-all duration-200"
+        leave-to-class="translate-x-[-700px]"
+      >
+        <InvoiceModal v-if="invoiceModal" />
+      </transition>
       <RouterView />
     </div>
   </div>
