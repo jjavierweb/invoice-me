@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// Import interfaces
+import type { InvoiceItemList } from "@/types/interfaces";
+
 // import store
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 
@@ -26,13 +29,15 @@ const paymentDueDate = ref(null);
 const productDescription = ref(null);
 const invoicePending = ref(null);
 const invoiceDraft = ref(null);
-const invoiceItemList = ref<[]>([]);
+const invoiceItemList = ref<[InvoiceItemList] | []>([]);
 const invoiceTotal = ref<number>(0);
 
+// Methods
 const check = () => {};
 const submitForm = () => {};
 const deleteInvoiceItem = (id: number) => {};
 const addNewInvoiceItem = () => {};
+// Method to close the invoice modal
 const closeInvoice = () => {
   invoiceModalStore.toggleInvoice();
 };
