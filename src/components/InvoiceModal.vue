@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// import store
+import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
+
+//define store
+const invoiceModalStore = useInvoiceModalStore();
+
 // variables for inputs
 const billerStreetAddress = ref(null);
 const billerCity = ref(null);
@@ -20,18 +26,20 @@ const paymentDueDate = ref(null);
 const productDescription = ref(null);
 const invoicePending = ref(null);
 const invoiceDraft = ref(null);
-const invoiceItemList = ref<
-  [{ id: number; itemName: string; qty: number; price: number; total: number }]
->([{ id: 0, itemName: "", qty: 0, price: 0, total: 0 }]);
+const invoiceItemList = ref<[]>([]);
 const invoiceTotal = ref<number>(0);
 
 const check = () => {};
 const submitForm = () => {};
 const deleteInvoiceItem = (id: number) => {};
 const addNewInvoiceItem = () => {};
-const closeInvoice = () => {};
+const closeInvoice = () => {
+  invoiceModalStore.toggleInvoice();
+};
 const saveDraft = () => {};
 const publishInvoice = () => {};
+
+//{ id: number; itemName: string; qty: number; price: number; total: number } definition of the invoiceItemList
 </script>
 
 <template>
