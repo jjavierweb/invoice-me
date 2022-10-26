@@ -23,10 +23,22 @@ export default {
 </script>
 <script setup lang="ts">
 import { RouterView } from "vue-router";
+import { computed } from "vue";
 
 // import components
 import Navigation from "@/components/Navigation.vue";
 import InvoiceModal from "@/components/InvoiceModal.vue";
+
+// import stores
+import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
+
+// define the store
+const invoiceModalStore = useInvoiceModalStore();
+
+// computed property to toggle invoice form
+const invoiceModal = computed(() => {
+  return invoiceModalStore.$state.invoiceModal;
+});
 </script>
 
 <template>
@@ -40,7 +52,7 @@ import InvoiceModal from "@/components/InvoiceModal.vue";
     <div
       class="relative flex flex-col sm:flex-row min-h-screen py-0 px-5 flex-1"
     >
-      <InvoiceModal />
+      <InvoiceModal v-if="invoiceModal" />
       <RouterView />
     </div>
   </div>
