@@ -50,7 +50,7 @@ const publishInvoice = () => {};
 <template>
   <div
     @click="check"
-    class="fixed top-0 left-0 w-full h-screen overflow-scroll sm:left-[90px] flex flex-col remove-scroll"
+    class="fixed top-0 left-0 w-full h-screen overflow-scroll sm:left-[90px] flex flex-col scrollbar-hide"
     ref="invoiceWrap"
   >
     <form
@@ -325,11 +325,3 @@ const publishInvoice = () => {};
     </form>
   </div>
 </template>
-
-<style lang="scss">
-.remove-scroll {
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-</style>
