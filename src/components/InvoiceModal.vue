@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-
-import { uid } from "uid";
+import { storeToRefs } from "pinia";
 
 // Import interfaces
 import type { InvoiceItemList } from "@/types/interfaces";
 
 // import store
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
+import { useInvoiceItemListStore } from "@/stores/invoiceItemsStore";
 
 //define store
 const invoiceModalStore = useInvoiceModalStore();
+const invoiceItemListStore = useInvoiceItemListStore();
+
+// import store values and actions
+const { invoiceItemList } = storeToRefs(invoiceItemListStore);
+const { addNewInvoiceItem, deleteInvoiceItem } = useInvoiceItemListStore();
 
 // variables for inputs
 const billerStreetAddress = ref<string | null>(null);
@@ -31,7 +36,6 @@ const paymentDueDate = ref<string | null>(null);
 const productDescription = ref<string | null>(null);
 const invoicePending = ref<boolean | null>(null);
 const invoiceDraft = ref<boolean | null>(null);
-const invoiceItemList = ref<InvoiceItemList[]>([]);
 const invoiceTotal = ref<number | null>(null);
 const dateOptions = ref<object | null>({
   year: "numeric",
@@ -49,24 +53,6 @@ invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString(
 // Methods
 const check = () => {};
 const submitForm = () => {};
-
-// Remove an item from the list of invoice items
-const deleteInvoiceItem = (id: string) => {
-  invoiceItemList.value = invoiceItemList.value.filter((item) => {
-    return item.id !== id;
-  });
-};
-
-// Add new item to the list of invoice items
-const addNewInvoiceItem = () => {
-  invoiceItemList.value.push({
-    id: uid(),
-    itemName: "",
-    qty: null,
-    price: null,
-    total: null,
-  });
-};
 
 // Method to close the invoice modal
 const closeInvoice = () => {
