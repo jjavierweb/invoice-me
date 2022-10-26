@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+
+import { uid } from "uid";
 
 // Import interfaces
 import type { InvoiceItemList } from "@/types/interfaces";
@@ -11,32 +13,61 @@ import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 const invoiceModalStore = useInvoiceModalStore();
 
 // variables for inputs
-const billerStreetAddress = ref(null);
-const billerCity = ref(null);
-const billerZipCode = ref(null);
-const billerCountry = ref(null);
-const clientName = ref(null);
-const clientEmail = ref(null);
-const clientStreetAddress = ref(null);
-const clientCity = ref(null);
-const clientZipCode = ref(null);
-const clientCountry = ref(null);
-const invoiceDateUnix = ref(null);
-const invoiceDate = ref(null);
-const paymentTerms = ref(null);
-const paymentDueDateUnix = ref(null);
-const paymentDueDate = ref(null);
-const productDescription = ref(null);
-const invoicePending = ref(null);
-const invoiceDraft = ref(null);
-const invoiceItemList = ref<[InvoiceItemList] | []>([]);
-const invoiceTotal = ref<number>(0);
+const billerStreetAddress = ref<string | null>(null);
+const billerCity = ref<string | null>(null);
+const billerZipCode = ref<string | null>(null);
+const billerCountry = ref<string | null>(null);
+const clientName = ref<string | null>(null);
+const clientEmail = ref<string | null>(null);
+const clientStreetAddress = ref<string | null>(null);
+const clientCity = ref<string | null>(null);
+const clientZipCode = ref<string | null>(null);
+const clientCountry = ref<string | null>(null);
+const invoiceDateUnix = ref<number | null>(null);
+const invoiceDate = ref<string | null>(null);
+const paymentTerms = ref<string | null>(null);
+const paymentDueDateUnix = ref<number | null>(null);
+const paymentDueDate = ref<string | null>(null);
+const productDescription = ref<string | null>(null);
+const invoicePending = ref<boolean | null>(null);
+const invoiceDraft = ref<boolean | null>(null);
+const invoiceItemList = ref<InvoiceItemList[]>([]);
+const invoiceTotal = ref<number | null>(null);
+const dateOptions = ref<object | null>({
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+
+// setup the invoice Date to current date
+invoiceDateUnix.value = Date.now();
+invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString(
+  "en-us",
+  dateOptions.value
+);
 
 // Methods
 const check = () => {};
 const submitForm = () => {};
-const deleteInvoiceItem = (id: number) => {};
-const addNewInvoiceItem = () => {};
+
+// Remove an item from the list of invoice items
+const deleteInvoiceItem = (id: string) => {
+  invoiceItemList.value = invoiceItemList.value.filter((item) => {
+    return item.id !== id;
+  });
+};
+
+// Add new item to the list of invoice items
+const addNewInvoiceItem = () => {
+  invoiceItemList.value.push({
+    id: uid(),
+    itemName: "",
+    qty: null,
+    price: null,
+    total: null,
+  });
+};
+
 // Method to close the invoice modal
 const closeInvoice = () => {
   invoiceModalStore.toggleInvoice();
@@ -44,7 +75,20 @@ const closeInvoice = () => {
 const saveDraft = () => {};
 const publishInvoice = () => {};
 
-//{ id: number; itemName: string; qty: number; price: number; total: number } definition of the invoiceItemList
+// whatch the payment terms changes
+watch(paymentTerms, () => {
+  // create a new date instance
+  const futureDate: Date = new Date();
+  // set the payment date of unix format to the current day + the amount of days selected
+  paymentDueDateUnix.value = futureDate.setDate(
+    futureDate.getDate() + parseInt(paymentTerms.value)
+  );
+  // format the payment due date that will be shown in the browser
+  paymentDueDate.value = new Date(paymentDueDateUnix.value).toLocaleDateString(
+    "en-us",
+    dateOptions.value
+  );
+});
 </script>
 
 <template>
@@ -258,14 +302,14 @@ const publishInvoice = () => {};
               </td>
               <td class="basis-[10%] text-left">
                 <input
-                  type="text"
+                  type="number"
                   v-model="item.qty"
                   class="w-full bg-dark-purple text-white rounded-[4px] py-3 px-1 border-none"
                 />
               </td>
               <td class="basis-[20%] text-left">
                 <input
-                  type="text"
+                  type="number"
                   v-model="item.price"
                   class="w-full bg-dark-purple text-white rounded-[4px] py-3 px-1 border-none"
                 />
