@@ -4,9 +4,9 @@
  */
 
 export interface InvoiceItemList {
-  id: number;
-  itemName: string;
-  qty: number;
-  price: number;
-  total: number;
+  id: string | null;
+  itemName: string | null;
+  qty: number | null;
+  price: number | null;
+  total: number | null;
 }
