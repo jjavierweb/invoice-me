@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// import stores
+import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
+
+const invoiceModalStore = useInvoiceModalStore();
+
 const filterMenu = ref(false);
 
-const newInvoice = () => {};
+const newInvoice = () => {
+  invoiceModalStore.toggleInvoice();
+};
 
 //funciton to toggle filter
 const toggleFilterMenu = () => {
