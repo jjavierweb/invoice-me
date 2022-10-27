@@ -13,6 +13,7 @@ module.exports = {
         orange: "#ff8f00",
         "very-dark-purple": "#141625",
         "dark-gray": "#777f98",
+        "weird-purple": "#1e2139",
       },
     },
     screens: {
