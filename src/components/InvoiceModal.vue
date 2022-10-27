@@ -2,20 +2,30 @@
 import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 
-// Import interfaces
-import type { InvoiceItemList } from "@/types/interfaces";
+import { uid } from "uid";
+
+// import components
+import Loading from "@/components/Loading.vue";
 
 // import store
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 import { useInvoiceItemListStore } from "@/stores/invoiceItemsStore";
+import { useModalStore } from "@/stores/modelStore";
+
+// import firebase related requirements
+import useCollection from "@/composables/useCollection";
 
 //define store
 const invoiceModalStore = useInvoiceModalStore();
 const invoiceItemListStore = useInvoiceItemListStore();
+const modalStore = useModalStore();
 
 // import store values and actions
 const { invoiceItemList } = storeToRefs(invoiceItemListStore);
 const { addNewInvoiceItem, deleteInvoiceItem } = useInvoiceItemListStore();
+
+// extract firebase composable to add a document
+const { error, isPending, addDocument } = useCollection("invoices");
 
 // variables for inputs
 const billerStreetAddress = ref<string | null>(null);
@@ -42,6 +52,7 @@ const dateOptions = ref<object | null>({
   month: "short",
   day: "numeric",
 });
+const invoiceWrap = ref<HTMLElement | null>(null);
 
 // setup the invoice Date to current date
 invoiceDateUnix.value = Date.now();
@@ -51,15 +62,68 @@ invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString(
 );
 
 // Methods
-const check = () => {};
-const submitForm = () => {};
+const checkClick = (e: any) => {
+  if (e.target === invoiceWrap.value) {
+    modalStore.toggleModal();
+  }
+};
+
+const calInvoiceTotal = () => {
+  invoiceTotal.value = 0;
+  invoiceItemList.value.forEach((item) => {
+    invoiceTotal.value += item.total;
+  });
+};
+const uploadInvoice = async () => {
+  // check that the array of items is not empty
+  if (invoiceItemList.value.length <= 0) {
+    alert("Please ensure you filled out work items!");
+    return;
+  }
+  calInvoiceTotal();
+  const res = await addDocument({
+    invoiceId: uid(6),
+    billerStreetAddress: billerStreetAddress.value,
+    billerCity: billerCity.value,
+    billerZipCode: billerCountry.value,
+    billerCountry: billerCountry.value,
+    clientName: clientName.value,
+    clientEmail: clientEmail.value,
+    clientStreetAddress: clientStreetAddress.value,
+    clientCity: clientCity.value,
+    clientZipCode: clientZipCode.value,
+    clientCountry: clientCountry.value,
+    invoiceDate: invoiceDate.value,
+    invoiceDateUnix: invoiceDateUnix.value,
+    paymentTerms: paymentTerms.value,
+    paymentDueDate: paymentDueDate.value,
+    paymentDueDateUnix: paymentDueDateUnix.value,
+    productDescription: productDescription.value,
+    invoiceItemList: invoiceItemList.value,
+    invoiceTotal: invoiceTotal.value,
+    invoicePending: invoicePending.value,
+    invoiceDraft: invoiceDraft.value,
+    invoicePaid: null,
+  });
+  if (res) {
+    invoiceModalStore.toggleInvoice();
+    invoiceItemList.value = [];
+  }
+};
+const submitForm = () => {
+  uploadInvoice();
+};
+const saveDraft = () => {
+  invoiceDraft.value = true;
+};
+const publishInvoice = () => {
+  invoicePending.value = true;
+};
 
 // Method to close the invoice modal
 const closeInvoice = () => {
   invoiceModalStore.toggleInvoice();
 };
-const saveDraft = () => {};
-const publishInvoice = () => {};
 
 // whatch the payment terms changes
 watch(paymentTerms, () => {
@@ -79,7 +143,7 @@ watch(paymentTerms, () => {
 
 <template>
   <div
-    @click="check"
+    @click="checkClick"
     class="fixed top-0 left-0 w-full h-screen overflow-scroll sm:left-[90px] flex flex-col scrollbar-hide"
     ref="invoiceWrap"
   >
@@ -87,6 +151,7 @@ watch(paymentTerms, () => {
       @submit.prevent="submitForm"
       class="relative p-[56px] max-w-[700px] w-full bg-very-dark-purple text-white shadow-md shadow-slate-800/80"
     >
+      <Loading v-show="isPending">Saving...</Loading>
       <h1 class="text-2xl mb-12 font-bold">New Invoice</h1>
 
       <!-- Bill From Section -->
@@ -331,6 +396,7 @@ watch(paymentTerms, () => {
       <div class="flex mt-[60px]">
         <div class="flex flex-1">
           <button
+            type="button"
             @click="closeInvoice"
             class="bg-red flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center"
           >
@@ -339,12 +405,14 @@ watch(paymentTerms, () => {
         </div>
         <div class="flex justify-end">
           <button
+            type="submit"
             @click="saveDraft"
             class="flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center bg-dark-purple"
           >
             Save Draft
           </button>
           <button
+            type="submit"
             @click="publishInvoice"
             class="flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center bg-purple"
           >

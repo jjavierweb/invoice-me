@@ -3,8 +3,16 @@ import { ref } from "vue";
 
 // import stores
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
+import { useInvoiceStore } from "@/stores/invoiceStore";
 
+// import components
+import Invoice from "@/components/Invoice.vue";
+import { storeToRefs } from "pinia";
+
+// define stores
 const invoiceModalStore = useInvoiceModalStore();
+const invoiceStore = useInvoiceStore();
+const { invoiceData } = storeToRefs(invoiceStore);
 
 const filterMenu = ref(false);
 
@@ -83,6 +91,14 @@ const toggleFilterMenu = () => {
           <span class="text-sm">New Invoice</span>
         </div>
       </div>
+    </div>
+    <!-- Invoices -->
+    <div>
+      <Invoice
+        v-for="invoice in invoiceData"
+        :key="invoice.id"
+        :invoice="invoice"
+      />
     </div>
   </div>
 </template>
