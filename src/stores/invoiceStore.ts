@@ -6,12 +6,13 @@ import { db } from "@/firebase/config";
 import { collection, query, getDocs, onSnapshot } from "firebase/firestore";
 import { watchEffect } from "vue";
 
-const { documents } = getCollection("invoices");
+// import interface
+import type { Invoice } from "@/types/interfaces";
 
 // create the store
 export const useInvoiceStore = defineStore("invoiceStore", {
   state: () => ({
-    invoiceData: [],
+    invoiceData: [] as Invoice[],
     invoicesLoaded: null as boolean | null,
   }),
   actions: {
@@ -21,8 +22,8 @@ export const useInvoiceStore = defineStore("invoiceStore", {
       // confirm there are no duplicats on current and retrived data
       const unsub = onSnapshot(q, (snap) => {
         snap.docs.forEach((doc) => {
-          if (!this.invoiceData.some((invoice: any) => invoice.id === doc.id)) {
-            const data: object = {
+          if (!this.invoiceData.some((invoice) => invoice.id === doc.id)) {
+            const data: Invoice = {
               id: doc.id,
               invoiceId: doc.data().invoiceId,
               billerStreetAddress: doc.data().billerStreetAddress,
@@ -56,7 +57,7 @@ export const useInvoiceStore = defineStore("invoiceStore", {
         onInvalidate(() => unsub);
       });
     },
-    SET_INVOICE_DATA(payload: object) {
+    SET_INVOICE_DATA(payload: Invoice) {
       this.invoiceData.push(payload);
     },
     INVOICES_LOADED() {
