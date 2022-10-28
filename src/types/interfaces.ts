@@ -15,3 +15,30 @@ export interface InvoiceItemList {
   price: number | null;
   total: number | null;
 }
+
+// interface for invoice object
+export interface Invoice {
+  id: string | null;
+  invoiceId: string | null;
+  billerStreetAddress: string | null;
+  billerCity: string | null;
+  billerZipCode: string | null;
+  billerCountry: string | null;
+  clientName: string | null;
+  clientEmail: string | null;
+  clientStreetAddress: string | null;
+  clientCity: string | null;
+  clientZipCode: string | null;
+  clientCountry: string | null;
+  invoiceDateUnix: number | null;
+  invoiceDate: string | null;
+  paymentTerms: number | null;
+  paymentDueDateUnix: number | null;
+  paymentDueDate: string | null;
+  productDescription: string | null;
+  invoiceItemList: InvoiceItemList[] | [];
+  invoiceTotal: number | null;
+  invoicePending: boolean | null;
+  invoiceDraft: boolean | null;
+  invoicePaid: boolean | null;
+}
