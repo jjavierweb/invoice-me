@@ -74,6 +74,7 @@ const calInvoiceTotal = () => {
     invoiceTotal.value += item.total;
   });
 };
+// Send the invoice to the database
 const uploadInvoice = async () => {
   // check that the array of items is not empty
   if (invoiceItemList.value.length <= 0) {
