@@ -11,6 +11,7 @@ import Loading from "@/components/Loading.vue";
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 import { useInvoiceItemListStore } from "@/stores/invoiceItemsStore";
 import { useModalStore } from "@/stores/modelStore";
+import { useInvoiceStore } from "@/stores/invoiceStore";
 
 // import firebase related requirements
 import useCollection from "@/composables/useCollection";
@@ -19,6 +20,7 @@ import useCollection from "@/composables/useCollection";
 const invoiceModalStore = useInvoiceModalStore();
 const invoiceItemListStore = useInvoiceItemListStore();
 const modalStore = useModalStore();
+const invoiceStore = useInvoiceStore();
 
 // import store values and actions
 const { invoiceItemList } = storeToRefs(invoiceItemListStore);
@@ -109,6 +111,7 @@ const uploadInvoice = async () => {
   if (res) {
     invoiceModalStore.toggleInvoice();
     invoiceItemList.value = [];
+    invoiceStore.getInvoices();
   }
 };
 const submitForm = () => {

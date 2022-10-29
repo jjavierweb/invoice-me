@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 
-const props = defineProps({
-  invoice: Object,
-});
+// import types
+import type { Invoice } from "@/types/interfaces";
+
+const props = defineProps<{
+  invoice: Invoice;
+}>();
 </script>
 
 <template>
