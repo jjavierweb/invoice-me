@@ -33,7 +33,7 @@ const toggleFilterMenu = () => {
       <!-- Left child -->
       <div class="flex flex-col flex-1">
         <h1 class="text-5xl">Invoices</h1>
-        <span>There are 4 total invoices</span>
+        <span>There are {{ invoiceData.length }} total invoices</span>
       </div>
       <!-- Right child -->
       <div class="flex flex-1 justify-end items-center">
