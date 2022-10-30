@@ -111,7 +111,6 @@ const uploadInvoice = async () => {
   if (res) {
     invoiceModalStore.toggleInvoice();
     invoiceItemList.value = [];
-    invoiceStore.getInvoices();
   }
 };
 const submitForm = () => {

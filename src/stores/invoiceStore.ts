@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 // import firebase getCollecion
 import getCollection from "@/composables/getCollection";
 import { db } from "@/firebase/config";
-import { collection, query, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot } from "firebase/firestore";
 import { watchEffect } from "vue";
 
 // import interface
@@ -54,7 +54,7 @@ export const useInvoiceStore = defineStore("invoiceStore", {
         this.INVOICES_LOADED();
       });
       watchEffect((onInvalidate) => {
-        onInvalidate(() => unsub);
+        onInvalidate(() => unsub());
       });
     },
     SET_INVOICE_DATA(payload: Invoice) {
