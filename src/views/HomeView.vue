@@ -93,12 +93,23 @@ const toggleFilterMenu = () => {
       </div>
     </div>
     <!-- Invoices -->
-    <div>
+    <div v-if="invoiceData.length > 0">
       <Invoice
         v-for="invoice in invoiceData"
         :key="invoice.id"
         :invoice="invoice"
       />
+    </div>
+    <div v-else class="flex flex-col mt-40 items-center">
+      <img
+        src="@/assets/images/illustration-empty.svg"
+        alt="image of empty"
+        class="w-[214px] h-[200px]"
+      />
+      <h3 class="text-xl mt-10 font-semibold">There is nothing here</h3>
+      <p class="text-center max-w-[220px] text-xs font-light mt-4">
+        Create a new invoice by clicking the New Invoice button and get started
+      </p>
     </div>
   </div>
 </template>
