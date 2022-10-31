@@ -14,6 +14,7 @@ export const useInvoiceStore = defineStore("invoiceStore", {
   state: () => ({
     invoiceData: [] as Invoice[],
     invoicesLoaded: null as boolean | null,
+    currentInvoiceArray: null as Invoice[] | null,
   }),
   actions: {
     getInvoices() {
@@ -48,20 +49,19 @@ export const useInvoiceStore = defineStore("invoiceStore", {
               invoiceDraft: doc.data().invoiceDraft,
               invoicePaid: doc.data().invoicePaid,
             };
-            this.SET_INVOICE_DATA(data);
+            this.invoiceData.push(data);
           }
         });
-        this.INVOICES_LOADED();
+        this.invoicesLoaded = true;
       });
       watchEffect((onInvalidate) => {
         onInvalidate(() => unsub());
       });
     },
-    SET_INVOICE_DATA(payload: Invoice) {
-      this.invoiceData.push(payload);
-    },
-    INVOICES_LOADED() {
-      this.invoicesLoaded = true;
+    setCurrentInvoice(payload: string | string[]) {
+      this.currentInvoiceArray = this.invoiceData.filter((invoice: Invoice) => {
+        return invoice.id === payload;
+      });
     },
   },
 });
