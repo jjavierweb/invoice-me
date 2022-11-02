@@ -14,6 +14,8 @@ module.exports = {
         "very-dark-purple": "#141625",
         "dark-gray": "#777f98",
         "weird-purple": "#1e2139",
+        lavender: "#dfe3fa",
+        "cool-gray": "#888eb0",
       },
     },
     screens: {
