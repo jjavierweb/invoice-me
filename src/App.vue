@@ -95,6 +95,75 @@ const modalActive = computed(() => {
 </template>
 
 <style lang="scss">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.app {
+  background-color: #141625;
+  min-height: 100vh;
+  @media (min-width: 900px) {
+    flex-direction: row !important;
+  }
+  .app-content {
+    padding: 0 20px;
+    flex: 1;
+    position: relative;
+  }
+}
+.mobile-message {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #141625;
+  color: #fff;
+  p {
+    margin-top: 16px;
+  }
+}
+// animated invoice
+.invoice-enter-active,
+.invoice-leave-active {
+  transition: 0.8s ease all;
+}
+.invoice-enter-from,
+.invoice-leave-to {
+  transform: translateX(-700px);
+}
+button,
+.button {
+  cursor: pointer;
+  padding: 16px 24px;
+  border-radius: 30px;
+  border: none;
+  font-size: 12px;
+  margin-right: 8px;
+  color: #fff;
+}
+// utility classes
+.flex {
+  display: flex;
+}
+.flex-column {
+  flex-direction: column;
+}
+.container {
+  width: 100%;
+  padding: 40px 10px;
+  max-width: 850px;
+  margin: 0 auto;
+  @media (min-width: 900px) {
+    padding-top: 72px;
+  }
+}
+.nav-link {
+  text-decoration: none;
+  color: initial;
+}
+// Status Button Styling
 .status-button {
   &::before {
     content: "";
