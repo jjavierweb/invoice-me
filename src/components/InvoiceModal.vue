@@ -357,6 +357,7 @@ watch(paymentTerms, () => {
               <td class="basis-[10%] text-left">
                 <input
                   type="number"
+                  min="1"
                   v-model="item.qty"
                   class="w-full bg-dark-purple text-white rounded-[4px] py-3 px-1 border-none"
                 />
