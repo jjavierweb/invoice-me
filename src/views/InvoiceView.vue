@@ -27,16 +27,28 @@ currentInvoice = currentInvoiceArray.value[0]; // cleanup for the markup
 </script>
 
 <template>
-  <div v-if="currentInvoice" class="invoice-view container">
-    <RouterLink class="nav-link flex" :to="{ name: 'home' }">
-      <img src="@/assets/images/icon-arrow-left.svg" alt="" />
+  <div
+    v-if="currentInvoice"
+    class="w-full py-10 px-[10px] max-w-[850px] sm:pt-[72px] my-0 mx-auto"
+  >
+    <RouterLink
+      class="flex mb-8 items-center text-white text-xs"
+      :to="{ name: 'home' }"
+    >
+      <img
+        src="@/assets/images/icon-arrow-left.svg"
+        alt=""
+        class="mr-4 w-[7px] h-[10px]"
+      />
       Go Back
     </RouterLink>
     <!-- HEADER -->
-    <div class="header flex">
+    <div
+      class="flex bg-weird-purple rounded-[20px] items-center py-6 px-8 text-xs"
+    >
       <!-- LEFT -->
-      <div class="left flex">
-        <span>Status</span>
+      <div class="flex items-center">
+        <span class="text-lavender mr-4">Status</span>
         <!-- Status buttons -->
         <div
           class="status-button flex"
@@ -52,31 +64,40 @@ currentInvoice = currentInvoiceArray.value[0]; // cleanup for the markup
         </div>
       </div>
       <!-- RIGHT -->
-      <div class="right flex">
-        <button class="bg-purple p-2">Edit Invoice</button>
-        <button class="bg-red p-2 ml-2">Delete Invoice</button>
-        <button class="bg-green p-2 ml-2" v-if="currentInvoice.invoicePending">
+      <div class="flex flex-1 justify-end">
+        <button class="bg-purple py-4 px-6 hover:bg-[#5741af] text-white">
+          Edit
+        </button>
+        <button class="bg-red py-4 px-6 ml-2 hover:bg-[#bd4646] text-white">
+          Delete
+        </button>
+        <button
+          class="bg-green py-4 px-6 ml-2 hover:bg-[#29ab7f] text-white"
+          v-if="currentInvoice.invoicePending"
+        >
           Mark as Paid
         </button>
         <button
           v-if="currentInvoice.invoiceDraft || currentInvoice.invoicePaid"
-          class="bg-orange p-2 ml-2"
+          class="bg-orange py-4 px-6 ml-2 text-white"
         >
           Mark as Pending
         </button>
       </div>
     </div>
     <!-- Invoice Details -->
-    <div class="invoice-details flex flex-col">
+    <div class="flex flex-col bg-weird-purple rounded-[20px] p-12 mt-6">
       <!-- TOP -->
-      <div class="top flex">
+      <div class="flex text-lavender">
         <!-- LEFT -->
-        <div class="left flex flex-col">
-          <p><span>#</span>{{ currentInvoice.invoiceId }}</p>
-          <p>{{ currentInvoice.productDescription }}</p>
+        <div class="flex flex-col text-xs">
+          <p class="text-2xl uppercase text-white mb-2">
+            <span class="text-[#888eb0]">#</span>{{ currentInvoice.invoiceId }}
+          </p>
+          <p class="text-base">{{ currentInvoice.productDescription }}</p>
         </div>
         <!-- RIGHT -->
-        <div class="right flex flex-col">
+        <div class="flex flex-col flex-1 text-xs items-end">
           <p>{{ currentInvoice.billerStreetAddress }}</p>
           <p>{{ currentInvoice.billerCity }}</p>
           <p>{{ currentInvoice.billerZipCode }}</p>
@@ -84,217 +105,63 @@ currentInvoice = currentInvoiceArray.value[0]; // cleanup for the markup
         </div>
       </div>
       <!-- MIDDLE -->
-      <div class="middle flex">
+      <div class="flex mt-[50px] text-lavender gap-4">
         <!-- Payment Section -->
-        <div class="payment flex flex-col">
-          <h4>Invoice Date:</h4>
-          <p>
+        <div class="flex flex-col flex-1">
+          <h4 class="text-xs font-normal mb-3">Invoice Date:</h4>
+          <p class="text-base font-semibold">
             {{ currentInvoice.invoiceDate }}
           </p>
-          <h4>Payment Date:</h4>
-          <p>
+          <h4 class="text-xs font-normal mb-3 mt-8">Payment Date:</h4>
+          <p class="text-base font-semibold">
             {{ currentInvoice.paymentDueDate }}
           </p>
         </div>
         <!-- Bill To Section -->
-        <div class="bill flex flex-col">
-          <h4>Bill To:</h4>
-          <p>{{ currentInvoice.clientName }}</p>
-          <p>{{ currentInvoice.clientStreetAddress }}</p>
-          <p>{{ currentInvoice.clientCity }}</p>
-          <p>{{ currentInvoice.clientZipCode }}</p>
-          <p>{{ currentInvoice.clientCountry }}</p>
+        <div class="flex flex-col flex-1">
+          <h4 class="text-xs font-normal mb-3">Bill To:</h4>
+          <p class="text-base">{{ currentInvoice.clientName }}</p>
+          <p class="text-xs mt-auto">
+            {{ currentInvoice.clientStreetAddress }}
+          </p>
+          <p class="text-xs">{{ currentInvoice.clientCity }}</p>
+          <p class="text-xs">{{ currentInvoice.clientZipCode }}</p>
+          <p class="text-xs">{{ currentInvoice.clientCountry }}</p>
         </div>
-        <div class="send-to flex flex-col">
-          <h4>Send to:</h4>
-          <p>{{ currentInvoice.clientEmail }}</p>
+        <div class="flex flex-col flex-2">
+          <h4 class="text-xs font-normal mb-3">Send to:</h4>
+          <p class="text-base">{{ currentInvoice.clientEmail }}</p>
         </div>
       </div>
       <!-- FOOTER -->
-      <div class="bottom flex flex-col">
-        <div class="billing-items">
-          <div class="heading flex">
-            <p>Item Name:</p>
-            <p>QTY</p>
-            <p>Price</p>
-            <p>Total</p>
+      <div class="flex flex-col mt-[50px]">
+        <div class="p-8 rounded-t-[20px] bg-dark-purple">
+          <div class="flex text-lavender text-xs mb-8">
+            <p class="flex-3 text-left">Item Name:</p>
+            <p class="flex-1 text-right">QTY</p>
+            <p class="flex-1 text-right">Price</p>
+            <p class="flex-1 text-right">Total</p>
           </div>
           <div
             v-for="(item, index) in currentInvoice.invoiceItemList"
             :key="index"
-            class="item flex"
+            class="flex mb-8 text-[13px] text-white last:mb-0"
           >
-            <p>{{ item.itemName }}</p>
-            <p>{{ item.qty }}</p>
-            <p>$ {{ item.price }}</p>
-            <p>$ {{ item.total }}</p>
+            <p class="flex-3 text-left">{{ item.itemName }}</p>
+            <p class="flex-1 text-right">{{ item.qty }}</p>
+            <p class="flex-1 text-right">$ {{ item.price }}</p>
+            <p class="flex-1 text-right">$ {{ item.total }}</p>
           </div>
         </div>
-        <div class="total flex">
-          <p>Amount Due:</p>
-          <p>$ {{ currentInvoice.invoiceTotal }}</p>
+        <div
+          class="flex text-white p-8 bg-very-dark-purple items-center rounded-b-[20px]"
+        >
+          <p class="flex-1 text-xs">Amount Due:</p>
+          <p class="flex-1 text-2xl text-right">
+            $ {{ currentInvoice.invoiceTotal }}
+          </p>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.invoice-view {
-  .nav-link {
-    margin-bottom: 32px;
-    align-items: center;
-    color: #fff;
-    font-size: 12px;
-    img {
-      margin-right: 16px;
-      width: 7px;
-      height: 10px;
-    }
-  }
-  .header,
-  .invoice-details {
-    background-color: #1e2139;
-    border-radius: 20px;
-  }
-  .header {
-    align-items: center;
-    padding: 24px 32px;
-    font-size: 12px;
-    .left {
-      align-items: center;
-      span {
-        color: #dfe3fa;
-        margin-right: 16px;
-      }
-    }
-    .right {
-      flex: 1;
-      justify-content: flex-end;
-      button {
-        color: #fff;
-      }
-    }
-  }
-  .invoice-details {
-    padding: 48px;
-    margin-top: 24px;
-    .top {
-      div {
-        color: #dfe3fa;
-        flex: 1;
-      }
-      .left {
-        font-size: 12px;
-        p:first-child {
-          font-size: 24px;
-          text-transform: uppercase;
-          color: #fff;
-          margin-bottom: 8px;
-        }
-        p:nth-child(2) {
-          font-size: 16px;
-        }
-        span {
-          color: #888eb0;
-        }
-      }
-      .right {
-        font-size: 12px;
-        align-items: flex-end;
-      }
-    }
-    .middle {
-      margin-top: 50px;
-      color: #dfe3fa;
-      gap: 16px;
-      h4 {
-        font-size: 12px;
-        font-weight: 400;
-        margin-bottom: 12px;
-      }
-      p {
-        font-size: 16px;
-      }
-      .bill,
-      .payment {
-        flex: 1;
-      }
-      .payment {
-        h4:nth-child(3) {
-          margin-top: 32px;
-        }
-        p {
-          font-weight: 600;
-        }
-      }
-      .bill {
-        p:nth-child(2) {
-          font-size: 16px;
-        }
-        p:nth-child(3) {
-          margin-top: auto;
-        }
-        p {
-          font-size: 12px;
-        }
-      }
-      .send-to {
-        flex: 2;
-      }
-    }
-    .bottom {
-      margin-top: 50px;
-      .billing-items {
-        padding: 32px;
-        border-radius: 20px 20px 0 0;
-        background-color: #252945;
-        .heading {
-          color: #dfe3fa;
-          font-size: 12px;
-          margin-bottom: 32px;
-          p:first-child {
-            flex: 3;
-            text-align: left;
-          }
-          p {
-            flex: 1;
-            text-align: right;
-          }
-        }
-        .item {
-          margin-bottom: 32px;
-          font-size: 13px;
-          color: #fff;
-          &:last-child {
-            margin-bottom: 0;
-          }
-          p:first-child {
-            flex: 3;
-            text-align: left;
-          }
-          p {
-            flex: 1;
-            text-align: right;
-          }
-        }
-      }
-      .total {
-        color: #fff;
-        padding: 32px;
-        background-color: rgba(12, 14, 22, 0.7);
-        align-items: center;
-        border-radius: 0 0 20px 20px;
-        p {
-          flex: 1;
-          font-size: 12px;
-        }
-        p:nth-child(2) {
-          font-size: 28px;
-          text-align: right;
-        }
-      }
-    }
-  }
-}
-</style>
