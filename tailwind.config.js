@@ -17,6 +17,10 @@ module.exports = {
         lavender: "#dfe3fa",
         "cool-gray": "#888eb0",
       },
+      flex: {
+        2: "2 2 0%",
+        3: "3 3 0%",
+      },
     },
     screens: {
       sm: "900px",
