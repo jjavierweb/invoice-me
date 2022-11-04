@@ -13,6 +13,9 @@ const closeModal = () => {
 const closeInvoice = () => {
   modalStore.toggleModal();
   invoiceModalStore.toggleInvoice();
+  if (invoiceModalStore.editInvoice) {
+    invoiceModalStore.toggleEditInvoice();
+  }
 };
 </script>
 
