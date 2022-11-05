@@ -2,6 +2,7 @@
 // import store for invoiceModal
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 import { useModalStore } from "@/stores/modelStore";
+import { useInvoiceItemListStore } from "@/stores/invoiceItemsStore";
 
 const invoiceModalStore = useInvoiceModalStore();
 const modalStore = useModalStore();
@@ -15,6 +16,7 @@ const closeInvoice = () => {
   invoiceModalStore.toggleInvoice();
   if (invoiceModalStore.editInvoice) {
     invoiceModalStore.toggleEditInvoice();
+    useInvoiceItemListStore().invoiceItemList = [];
   }
 };
 </script>
