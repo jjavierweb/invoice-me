@@ -39,6 +39,12 @@ const deleteInvoice = async (docId: string, routeId: string) => {
   await invoiceStore.deleleteInvoice(docId, routeId);
   router.push({ name: "home" });
 };
+const markAsPaid = async (docId: string) => {
+  await invoiceStore.updateStatusToPaid(docId);
+};
+const markAsPending = async (docId: string) => {
+  await invoiceStore.updateStatusToPending(docId);
+};
 watch(editInvoice, () => {
   if (!editInvoice.value) {
     currentInvoice.value = currentInvoiceArray.value[0];
@@ -98,12 +104,14 @@ watch(editInvoice, () => {
           Delete
         </button>
         <button
+          @click="markAsPaid(currentInvoice.id)"
           class="bg-green py-4 px-6 ml-2 hover:bg-[#29ab7f] text-white"
           v-if="currentInvoice.invoicePending"
         >
           Mark as Paid
         </button>
         <button
+          @click="markAsPending(currentInvoice.id)"
           v-if="currentInvoice.invoiceDraft || currentInvoice.invoicePaid"
           class="bg-orange py-4 px-6 ml-2 text-white"
         >
