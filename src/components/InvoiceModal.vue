@@ -158,7 +158,8 @@ const updateInvoice = async () => {
   }
   calInvoiceTotal();
   const routeId: string = currentInvoiceArray.value[0].id;
-  await updateCurrentDoc(routeId, {
+  // easier to manage and tshoot in a variable
+  let updatedInvoice: Invoice = {
     invoiceId: invoiceId.value,
     billerStreetAddress: billerStreetAddress.value,
     billerCity: billerCity.value,
@@ -181,7 +182,10 @@ const updateInvoice = async () => {
     invoicePending: invoicePending.value,
     invoiceDraft: invoiceDraft.value,
     invoicePaid: invoicePaid.value,
-  });
+  };
+  // submit update to the backend
+  await updateCurrentDoc(routeId, updatedInvoice);
+  // update the front end
   invoiceStore.updateInvoice(invoiceId.value, routeId);
 };
 
@@ -196,7 +200,11 @@ const saveDraft = () => {
   invoiceDraft.value = true;
 };
 const publishInvoice = () => {
-  invoicePending.value = true;
+  if (!invoiceDraft.value) {
+    // make sure that the pending and draft
+    // do not show up at the same time
+    invoicePending.value = true;
+  }
 };
 
 // Method to close the invoice modal
@@ -238,7 +246,7 @@ watch(paymentTerms, () => {
       <h1 v-if="!editInvoice" class="text-2xl mb-12 font-bold">New Invoice</h1>
       <h1 v-else class="text-2xl mb-12 font-bold">
         Edit Invoice <span class="text-lavender mr-1 italic">#</span
-        >{{ invoiceId }}
+        ><span class="uppercase">{{ invoiceId }}</span>
       </h1>
       <!-- Bill From Section -->
       <div class="flex flex-col mb-12">
