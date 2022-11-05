@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 // import stores
 import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
@@ -14,7 +14,8 @@ const invoiceModalStore = useInvoiceModalStore();
 const invoiceStore = useInvoiceStore();
 const { invoiceData } = storeToRefs(invoiceStore);
 
-const filterMenu = ref(false);
+const filterMenu = ref<boolean | null>(false);
+const filterInvoice = ref<string | null>(null);
 
 const newInvoice = () => {
   invoiceModalStore.toggleInvoice();
@@ -24,6 +25,30 @@ const newInvoice = () => {
 const toggleFilterMenu = () => {
   filterMenu.value = !filterMenu.value;
 };
+
+const filterInvoices = (e: any) => {
+  if (e.target.innerText === "Clear Filter") {
+    filterInvoice.value = null;
+    return;
+  }
+  filterInvoice.value = e.target.innerText;
+};
+
+// computed properties
+const filteredData = computed(() => {
+  return invoiceData.value.filter((invoice) => {
+    if (filterInvoice.value === "Draft") {
+      return invoice.invoiceDraft === true;
+    }
+    if (filterInvoice.value === "Pending") {
+      return invoice.invoicePending === true;
+    }
+    if (filterInvoice.value === "Paid") {
+      return invoice.invoicePaid === true;
+    }
+    return invoice;
+  });
+});
 </script>
 
 <template>
@@ -33,7 +58,7 @@ const toggleFilterMenu = () => {
       <!-- Left child -->
       <div class="flex flex-col flex-1">
         <h1 class="text-5xl">Invoices</h1>
-        <span>There are {{ invoiceData.length }} total invoices</span>
+        <span>There are {{ filteredData.length }} total invoices</span>
       </div>
       <!-- Right child -->
       <div class="flex flex-1 justify-end items-center">
@@ -42,7 +67,11 @@ const toggleFilterMenu = () => {
           @click="toggleFilterMenu"
           class="relative flex mr-10 items-center cursor-pointer"
         >
-          <span class="text-sm">Filter by status</span>
+          <span class="text-sm"
+            >Filter by status
+            <span v-if="filterInvoice">: {{ filterInvoice }}</span>
+            ></span
+          >
           <img
             src="@/assets/images/icon-arrow-down.svg"
             alt=""
@@ -53,21 +82,25 @@ const toggleFilterMenu = () => {
             class="w-[120px] absolute top-[25px] list-none bg-very-dark-purple shadow-md shadow-slate-800/60"
           >
             <li
+              @click="filterInvoices"
               class="cursor-pointer text-xs px-[10px] py-[20px] hover:bg-slate-300 hover:text-very-dark-purple"
             >
               Draft
             </li>
             <li
+              @click="filterInvoices"
               class="cursor-pointer text-xs px-[10px] py-[20px] hover:text-very-dark-purple hover:bg-slate-300"
             >
               Pending
             </li>
             <li
+              @click="filterInvoices"
               class="cursor-pointer text-xs px-[10px] py-[20px] hover:text-very-dark-purple hover:bg-slate-300"
             >
               Paid
             </li>
             <li
+              @click="filterInvoices"
               class="cursor-pointer text-xs px-[10px] py-[20px] hover:text-very-dark-purple hover:bg-slate-300"
             >
               Clear Filter
@@ -93,9 +126,9 @@ const toggleFilterMenu = () => {
       </div>
     </div>
     <!-- Invoices -->
-    <div v-if="invoiceData.length > 0">
+    <div v-if="filteredData.length > 0">
       <Invoice
-        v-for="invoice in invoiceData"
+        v-for="invoice in filteredData"
         :key="invoice.id"
         :invoice="invoice"
       />
