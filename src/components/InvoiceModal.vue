@@ -15,6 +15,7 @@ import { useInvoiceStore } from "@/stores/invoiceStore";
 
 // import firebase related requirements
 import useCollection from "@/composables/useCollection";
+import type { Invoice } from "@/types/interfaces";
 
 //define store
 const invoiceModalStore = useInvoiceModalStore();
@@ -24,12 +25,16 @@ const invoiceStore = useInvoiceStore();
 
 // import store values and actions
 const { invoiceItemList } = storeToRefs(invoiceItemListStore);
+const { editInvoice } = storeToRefs(invoiceModalStore);
 const { addNewInvoiceItem, deleteInvoiceItem } = useInvoiceItemListStore();
+const { currentInvoiceArray } = storeToRefs(invoiceStore);
 
 // extract firebase composable to add a document
-const { error, isPending, addDocument } = useCollection("invoices");
+const { error, isPending, addDocument, updateCurrentDoc } =
+  useCollection("invoices");
 
 // variables for inputs
+const invoiceId = ref<string | null>(null);
 const billerStreetAddress = ref<string | null>(null);
 const billerCity = ref<string | null>(null);
 const billerZipCode = ref<string | null>(null);
@@ -42,13 +47,14 @@ const clientZipCode = ref<string | null>(null);
 const clientCountry = ref<string | null>(null);
 const invoiceDateUnix = ref<number | null>(null);
 const invoiceDate = ref<string | null>(null);
-const paymentTerms = ref<string | null>(null);
+const paymentTerms = ref<number | null>(null);
 const paymentDueDateUnix = ref<number | null>(null);
 const paymentDueDate = ref<string | null>(null);
 const productDescription = ref<string | null>(null);
 const invoicePending = ref<boolean | null>(null);
 const invoiceDraft = ref<boolean | null>(null);
 const invoiceTotal = ref<number | null>(null);
+const invoicePaid = ref<boolean | null>(null);
 const dateOptions = ref<object | null>({
   year: "numeric",
   month: "short",
@@ -57,11 +63,40 @@ const dateOptions = ref<object | null>({
 const invoiceWrap = ref<HTMLElement | null>(null);
 
 // setup the invoice Date to current date
-invoiceDateUnix.value = Date.now();
-invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString(
-  "en-us",
-  dateOptions.value
-);
+if (!editInvoice.value) {
+  invoiceDateUnix.value = Date.now();
+  invoiceDate.value = new Date(invoiceDateUnix.value).toLocaleDateString(
+    "en-us",
+    dateOptions.value
+  );
+}
+
+if (editInvoice.value) {
+  const currentInvoice: Invoice = currentInvoiceArray.value[0]; // get current invoice info
+  // set the form values to the values of the current invoice from the database
+  invoiceId.value = currentInvoice.invoiceId;
+  billerStreetAddress.value = currentInvoice.billerStreetAddress;
+  billerCity.value = currentInvoice.billerCity;
+  billerZipCode.value = currentInvoice.billerZipCode;
+  billerCountry.value = currentInvoice.billerCountry;
+  clientName.value = currentInvoice.clientName;
+  clientEmail.value = currentInvoice.clientEmail;
+  clientStreetAddress.value = currentInvoice.clientStreetAddress;
+  clientCity.value = currentInvoice.clientCity;
+  clientZipCode.value = currentInvoice.clientZipCode;
+  clientCountry.value = currentInvoice.clientCountry;
+  invoiceDate.value = currentInvoice.invoiceDate;
+  invoiceDateUnix.value = currentInvoice.invoiceDateUnix;
+  paymentDueDate.value = currentInvoice.paymentDueDate;
+  paymentDueDateUnix.value = currentInvoice.paymentDueDateUnix;
+  paymentTerms.value = currentInvoice.paymentTerms;
+  productDescription.value = currentInvoice.productDescription;
+  invoicePending.value = currentInvoice.invoicePending;
+  invoiceDraft.value = currentInvoice.invoiceDraft;
+  invoiceTotal.value = currentInvoice.invoiceTotal;
+  invoiceItemList.value = currentInvoice.invoiceItemList;
+  invoicePaid.value = currentInvoice.invoicePaid;
+}
 
 // Methods
 const checkClick = (e: any) => {
@@ -88,7 +123,7 @@ const uploadInvoice = async () => {
     invoiceId: uid(6),
     billerStreetAddress: billerStreetAddress.value,
     billerCity: billerCity.value,
-    billerZipCode: billerCountry.value,
+    billerZipCode: billerZipCode.value,
     billerCountry: billerCountry.value,
     clientName: clientName.value,
     clientEmail: clientEmail.value,
@@ -111,9 +146,50 @@ const uploadInvoice = async () => {
   if (res) {
     invoiceModalStore.toggleInvoice();
     invoiceItemList.value = [];
+    await invoiceStore.getInvoices();
   }
 };
+
+// update the invoice on firebase
+const updateInvoice = async () => {
+  if (invoiceItemList.value.length <= 0) {
+    alert("Please ensure you filled out work items!");
+    return;
+  }
+  calInvoiceTotal();
+  const routeId: string = currentInvoiceArray.value[0].id;
+  await updateCurrentDoc(routeId, {
+    invoiceId: invoiceId.value,
+    billerStreetAddress: billerStreetAddress.value,
+    billerCity: billerCity.value,
+    billerZipCode: billerZipCode.value,
+    billerCountry: billerCountry.value,
+    clientName: clientName.value,
+    clientEmail: clientEmail.value,
+    clientStreetAddress: clientStreetAddress.value,
+    clientCity: clientCity.value,
+    clientZipCode: clientZipCode.value,
+    clientCountry: clientCountry.value,
+    invoiceDate: invoiceDate.value,
+    invoiceDateUnix: invoiceDateUnix.value,
+    paymentTerms: paymentTerms.value,
+    paymentDueDate: paymentDueDate.value,
+    paymentDueDateUnix: paymentDueDateUnix.value,
+    productDescription: productDescription.value,
+    invoiceItemList: invoiceItemList.value,
+    invoiceTotal: invoiceTotal.value,
+    invoicePending: invoicePending.value,
+    invoiceDraft: invoiceDraft.value,
+    invoicePaid: invoicePaid.value,
+  });
+  invoiceStore.updateInvoice(invoiceId.value, routeId);
+};
+
 const submitForm = () => {
+  if (editInvoice.value) {
+    updateInvoice();
+    return;
+  }
   uploadInvoice();
 };
 const saveDraft = () => {
@@ -126,6 +202,10 @@ const publishInvoice = () => {
 // Method to close the invoice modal
 const closeInvoice = () => {
   invoiceModalStore.toggleInvoice();
+  if (editInvoice.value) {
+    invoiceModalStore.toggleEditInvoice();
+    invoiceItemList.value = [];
+  }
 };
 
 // whatch the payment terms changes
@@ -134,7 +214,7 @@ watch(paymentTerms, () => {
   const futureDate: Date = new Date();
   // set the payment date of unix format to the current day + the amount of days selected
   paymentDueDateUnix.value = futureDate.setDate(
-    futureDate.getDate() + parseInt(paymentTerms.value)
+    futureDate.getDate() + paymentTerms.value
   );
   // format the payment due date that will be shown in the browser
   paymentDueDate.value = new Date(paymentDueDateUnix.value).toLocaleDateString(
@@ -155,8 +235,11 @@ watch(paymentTerms, () => {
       class="relative p-[56px] max-w-[700px] w-full bg-very-dark-purple text-white shadow-md shadow-slate-800/80"
     >
       <Loading v-show="isPending">Saving...</Loading>
-      <h1 class="text-2xl mb-12 font-bold">New Invoice</h1>
-
+      <h1 v-if="!editInvoice" class="text-2xl mb-12 font-bold">New Invoice</h1>
+      <h1 v-else class="text-2xl mb-12 font-bold">
+        Edit Invoice <span class="text-lavender mr-1 italic">#</span
+        >{{ invoiceId }}
+      </h1>
       <!-- Bill From Section -->
       <div class="flex flex-col mb-12">
         <h4 class="mb-6 text-purple text-sm">Bill From:</h4>
@@ -409,6 +492,7 @@ watch(paymentTerms, () => {
         </div>
         <div class="flex justify-end">
           <button
+            v-if="!editInvoice"
             type="submit"
             @click="saveDraft"
             class="flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center bg-dark-purple"
@@ -416,11 +500,20 @@ watch(paymentTerms, () => {
             Save Draft
           </button>
           <button
+            v-if="!editInvoice"
             type="submit"
             @click="publishInvoice"
             class="flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center bg-purple"
           >
             Create Invoice
+          </button>
+          <button
+            v-else
+            type="submit"
+            @click="publishInvoice"
+            class="flex py-4 px-6 rounded-[30px] border-none text-xs mr-2 text-white items-center justify-center bg-purple"
+          >
+            Update Invoice
           </button>
         </div>
       </div>
