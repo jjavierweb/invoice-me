@@ -19,6 +19,24 @@ export const useInvoiceStore = defineStore("invoiceStore", {
     invoicesLoaded: null as boolean | null,
     currentInvoiceArray: null as Invoice[] | null,
   }),
+  getters: {
+    filteredData: (state) => {
+      return (filter: string) => {
+        return state.invoiceData.filter((invoice) => {
+          if (filter === "Draft") {
+            return invoice.invoiceDraft === true;
+          }
+          if (filter === "Pending") {
+            return invoice.invoicePending === true;
+          }
+          if (filter === "Paid") {
+            return invoice.invoicePaid === true;
+          }
+          return invoice;
+        });
+      };
+    },
+  },
   actions: {
     //define store
     async getInvoices() {
