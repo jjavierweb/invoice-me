@@ -18,7 +18,7 @@ export interface InvoiceItemList {
 
 // interface for invoice object
 export interface Invoice {
-  id: string | null;
+  id?: string | null; // this is not present at the time of creation as it is assigned by firebase
   invoiceId: string | null;
   billerStreetAddress: string | null;
   billerCity: string | null;
