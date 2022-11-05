@@ -314,7 +314,7 @@ watch(paymentTerms, () => {
           <label for="clientEmail" class="text-xs mb-[6px]">Client Email</label>
           <input
             required
-            type="text"
+            type="email"
             class="w-full bg-dark-purple text-white rounded-[4px] py-3 px-1 border-none"
             id="clientEmail"
             v-model="clientEmail"
