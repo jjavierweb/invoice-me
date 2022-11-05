@@ -1,29 +1,49 @@
 <script setup lang="ts">
 //import vue and pinia stuff
 import { storeToRefs } from "pinia";
-import { useRoute, RouterLink } from "vue-router";
+import { useRoute, useRouter, RouterLink } from "vue-router";
+import { ref, watch } from "vue";
 
 // import types
 import type { Invoice } from "@/types/interfaces";
 
 // import store
 import { useInvoiceStore } from "@/stores/invoiceStore";
+import { useInvoiceModalStore } from "@/stores/invoiceModalStore";
 
 // define store
 const invoiceStore = useInvoiceStore();
+const invoiceModalStore = useInvoiceModalStore();
 
 // set store state to ref
 const { currentInvoiceArray } = storeToRefs(invoiceStore);
+const { editInvoice } = storeToRefs(invoiceModalStore);
 
 // define router object
 const route = useRoute();
+const router = useRouter();
 
 // define variables
-let currentInvoice: Invoice | null = null;
+let currentInvoice = ref<Invoice | null>(null);
 
 // call action to get current invoice
 invoiceStore.setCurrentInvoice(route.params.id);
-currentInvoice = currentInvoiceArray.value[0]; // cleanup for the markup
+currentInvoice.value = currentInvoiceArray.value[0]; // cleanup for the markup
+
+// Methods for this view
+const toggleEditInvoice = () => {
+  invoiceModalStore.toggleEditInvoice();
+  invoiceModalStore.toggleInvoice();
+};
+const deleteInvoice = async (docId: string, routeId: string) => {
+  await invoiceStore.deleleteInvoice(docId, routeId);
+  router.push({ name: "home" });
+};
+watch(editInvoice, () => {
+  if (!editInvoice.value) {
+    currentInvoice.value = currentInvoiceArray.value[0];
+  }
+});
 </script>
 
 <template>
@@ -65,10 +85,16 @@ currentInvoice = currentInvoiceArray.value[0]; // cleanup for the markup
       </div>
       <!-- RIGHT -->
       <div class="flex flex-1 justify-end">
-        <button class="bg-purple py-4 px-6 hover:bg-[#5741af] text-white">
+        <button
+          class="bg-purple py-4 px-6 hover:bg-[#5741af] text-white"
+          @click="toggleEditInvoice"
+        >
           Edit
         </button>
-        <button class="bg-red py-4 px-6 ml-2 hover:bg-[#bd4646] text-white">
+        <button
+          @click="deleteInvoice(currentInvoice.invoiceId, currentInvoice.id)"
+          class="bg-red py-4 px-6 ml-2 hover:bg-[#bd4646] text-white"
+        >
           Delete
         </button>
         <button
