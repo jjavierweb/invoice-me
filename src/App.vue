@@ -106,15 +106,7 @@ const modalActive = computed(() => {
     margin-top: 16px;
   }
 }
-// animated invoice
-.invoice-enter-active,
-.invoice-leave-active {
-  transition: 0.8s ease all;
-}
-.invoice-enter-from,
-.invoice-leave-to {
-  transform: translateX(-700px);
-}
+
 button,
 .button {
   cursor: pointer;
