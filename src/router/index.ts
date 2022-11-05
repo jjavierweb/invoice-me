@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import InvoiceView from "@/views/InvoiceView.vue";
+import LoginView from "@/views/LoginView.vue";
 import NotFound from "@/components/NotFound.vue";
 
 // firebase
@@ -9,7 +10,7 @@ import { auth } from "@/firebase/config";
 const requireAuth = (to: any, from: any, next: any) => {
   let user = auth.currentUser;
   if (!user) {
-    next({ name: "home" });
+    next({ name: "login" });
   } else {
     next();
   }
@@ -20,6 +21,12 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginView,
   },
   {
     path: "/invoice/:id",
