@@ -35,20 +35,9 @@ const filterInvoices = (e: any) => {
 };
 
 // computed properties
-const filteredData = computed(() => {
-  return invoiceData.value.filter((invoice) => {
-    if (filterInvoice.value === "Draft") {
-      return invoice.invoiceDraft === true;
-    }
-    if (filterInvoice.value === "Pending") {
-      return invoice.invoicePending === true;
-    }
-    if (filterInvoice.value === "Paid") {
-      return invoice.invoicePaid === true;
-    }
-    return invoice;
-  });
-});
+const filteredData = computed(() =>
+  invoiceStore.filteredData(filterInvoice.value)
+);
 </script>
 
 <template>
@@ -70,8 +59,7 @@ const filteredData = computed(() => {
           <span class="text-sm"
             >Filter by status
             <span v-if="filterInvoice">: {{ filterInvoice }}</span>
-            ></span
-          >
+          </span>
           <img
             src="@/assets/images/icon-arrow-down.svg"
             alt=""
