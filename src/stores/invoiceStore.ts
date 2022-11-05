@@ -10,7 +10,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 // import interface
 import type { Invoice } from "@/types/interfaces";
-const { deleteDocument } = useCollection("invoices");
+const { deleteDocument, updateCurrentDoc } = useCollection("invoices");
 
 // create the store
 export const useInvoiceStore = defineStore("invoiceStore", {
@@ -83,6 +83,34 @@ export const useInvoiceStore = defineStore("invoiceStore", {
     async deleleteInvoice(docId: string, routeId: string) {
       await deleteDocument(routeId);
       this.removeInvoice(docId);
+    },
+    // mutation to update status
+    // mutation to update status to pending
+    async updateStatusToPending(id: string) {
+      this.invoiceData.forEach((invoice: Invoice) => {
+        if (invoice.id === id) {
+          invoice.invoicePaid = false;
+          invoice.invoicePending = true;
+          invoice.invoiceDraft = false;
+        }
+      });
+      // call the update method for the backend
+      await updateCurrentDoc(id, {
+        invoicePaid: false,
+        invoicePending: true,
+        invoiceDraft: false,
+      });
+    },
+    async updateStatusToPaid(id: string) {
+      // update frontend
+      this.invoiceData.forEach((invoice: Invoice) => {
+        if (invoice.id === id) {
+          invoice.invoicePaid = true;
+          invoice.invoicePending = false;
+        }
+      });
+      // update backend
+      await updateCurrentDoc(id, { invoicePaid: true, invoicePending: false });
     },
   },
 });
