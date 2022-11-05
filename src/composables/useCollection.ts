@@ -39,7 +39,7 @@ const useCollection = (collectionName: string) => {
   };
 
   // update document
-  const updateCurrentDoc = async (docId: string, updatedInfo: Invoice) => {
+  const updateCurrentDoc = async (docId: string, updatedInfo: object) => {
     isPending.value = true;
     error.value = false;
     const docRef = doc(db, collectionName, docId);
