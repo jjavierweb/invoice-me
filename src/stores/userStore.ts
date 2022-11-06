@@ -11,10 +11,12 @@ import type { User } from "@/types/user";
 export const useUserStore = defineStore("user", {
   state: () => ({
     user: null as object | null,
+    error: null,
+    isPending: null,
   }),
   actions: {
-    async loginUser(email: string, password: string) {
-      this.user = await useLogin().loginUser(email, password);
+    async loginUser(email: string, password: string, rememberMe?: boolean) {
+      this.user = await useLogin().loginUser(email, password, rememberMe);
     },
     async signupUser(email: string, password: string, displayName?: string) {
       if (displayName) {
